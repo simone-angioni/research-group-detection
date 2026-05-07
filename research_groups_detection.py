@@ -629,7 +629,6 @@ def get_members(years):
 
 def get_coauthors_per_year(coauthorships, ego):
 	for coauthor in coauthorships.values():
-		#print(type(coauthor))
 		if ego == coauthor.source or ego == coauthor.target:
 			for edge in coauthor.edges:
 				year = edge.year
@@ -709,10 +708,8 @@ def is_connected(group_members, start_year, end_year, years):
     for y in range(start_year + 1, end_year):
         if y in years:
             coauthors = years[y]
-            #print(coauthors, group_members)
             active = group_members & coauthors
             
-            # almeno 2 membri oppure ego + 1
             if len(active) >= 2:
                 return True
     
@@ -728,9 +725,7 @@ def assemble_research_groups(members, communities, ego, years):
     author_to_comms = defaultdict(set)
 
     for id, community in communities.indexed_communities().items():
-        #print(community.authors)
         for a in community.authors:
-            #print(a)
             author_to_comms[a].add(id)
 
     year_comm_groups = defaultdict(dict)
@@ -774,14 +769,11 @@ def assemble_research_groups(members, communities, ego, years):
             
             if c in active:
                 g = active[c]
-                
-                # nuova logica continuità
                 gap = y - g["end"]
                 
                 if (gap <= ALLOW_GAP
                     or is_connected(g["last_members"], g["end"], y, years)
                 ):
-                    #print(f"Inserisco membri che hanno gap: {gap} nell'anno {y} -> {" ".join([ego_coauthors[m].name for m in ymembers])}")
                     g["end"] = y
                     g["members"].update(ymembers)
                     g["last_members"] = set(ymembers)   # aggiorna core recente
@@ -801,7 +793,6 @@ def assemble_research_groups(members, communities, ego, years):
                     "members": set(ymembers),
                     "last_members": set(ymembers)
                 }
-        
         # close not continuative groups
         if current_year_groups:
             for c, g in active.items():
@@ -849,7 +840,6 @@ def compute_coauthorships(products, authors):
 					a = Author(author['fullName'], author['pid']['id']['value'])
 					work_authors.add(a)
 		items = list(work_authors)
-		#print(items)
 		permutations = [(items[i], items[j]) for i in range(len(items)) for j in range(i+1, len(items))]
 		for nodes in permutations:
 			if nodes[0] in authors and nodes[1] in authors:
