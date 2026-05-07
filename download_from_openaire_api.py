@@ -41,17 +41,13 @@ def get_coauthors(products, main_author = None, debug=False):
 		year = int(work['publicationDate'].split("-")[0]) if "publicationDate" in work and work['publicationDate'] is not None else 9999999
 		work_authors = work['authors'] if isinstance(work['authors'], list) else json.loads(work['authors'])
 		for author in work_authors:
-			#print(author)
 			if "pid" in author and author['pid'] is not None: 
 				if "orcid" in author['pid']['id']['scheme']:
 					a = Author(author['fullName'], author['pid']['id']['value'])
 					if not a in authors: authors.append(a)
-		#print(authors, main_author)
 		if main_author is not None and main_author in authors:
-			#print("Found")
 			for author in authors:
 				if not author.orcid in ego_coauthors: ego_coauthors[author.orcid] = author
-				#if not year == 9999999:
 				ego_coauthors[author.orcid].works[w_id] = {'id': w_id, 'title': work['mainTitle'], 'type': work['type'], 'year': year}
 		elif main_author is None:
 			for author in authors:
